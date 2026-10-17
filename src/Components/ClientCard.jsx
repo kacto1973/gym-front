@@ -1,10 +1,8 @@
 import React from "react";
 import { useState } from "react";
-import MembershipModal from "./MembershipModal";
+import MembershipModal from "../Components/MembershipModal.jsx";
 
-const ClientCard = ({ client }) => {
-  const [modalActive, setModalActive] = useState(false);
-
+const ClientCard = ({ client, setModalActive }) => {
   const getInitials = (name) => {
     return name.substring(0, 2).toUpperCase();
   };

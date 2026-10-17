@@ -1,16 +1,41 @@
-# React + Vite
+# Gym Membership Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A clean, full-stack web application designed to help gym owners efficiently manage their clients' memberships, track expiration dates, and maintain essential emergency contact information.
 
-Currently, two official plugins are available:
+## 🎯 Goal
+Create an intuitive, easy-to-use platform that allows a gym owner to properly manage and organize client gym memberships without unnecessary complexity.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Tech Stack
+**Frontend:**
+* React
+* Tailwind CSS
 
-## React Compiler
+**Backend:**
+* Node.js
+* Express.js
+* MongoDB
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Core Features
+* **Client Dashboard:** Visual grid of client cards displaying essential membership information.
+* **Smart Search:** Filter entries by Client ID or Name to quickly verify membership status.
+* **Membership Management:** Quick-action buttons inside a modal to easily extend a client's term by +1 Month, +3 Months, or +1 Year.
+* **Status Badges:** Visual labels to instantly recognize membership standing:
+  * 🟢 **Active:** Currently running membership.
+  * 🟡 **Expiring Soon:** Less than 7 days left on the term.
+  * 🔴 **Expired:** Term has concluded.
+* **Detailed Profiles:** Store and access critical client information, including emergency contacts and basic medical notes (e.g., "Asthma - carries inhaler").
 
-## Expanding the ESLint configuration
+## 🗄️ Database Design
+The application runs on a single main MongoDB collection for simplicity and performance. 
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Client Schema:**
+```javascript
+{
+  name: String,
+  phoneNumber: String,
+  emergencyContact: String,
+  notes: String,
+  startOfTerm: Date,
+  endOfTerm: Date,
+  active: Boolean
+}
