@@ -1,12 +1,20 @@
 import React from "react";
+import { useState } from "react";
 
 const MembershipModal = ({ client, modalActive, setModalActive }) => {
+  const [selectedExtension, setSelectedExtension] = useState(null);
+  if (modalActive) {
+    console.log("Current Selected Client:", client);
+  }
+
   if (!modalActive) return null;
 
   return (
     <div className="fixed inset-0 bg-black/70 z-40 flex justify-center items-center">
       <div
-        className={"relative z-50 p-4 bg-white rounded-md flex flex-col gap-3"}
+        className={
+          "relative max-w-[50%] z-50 p-4 bg-white rounded-md flex flex-col gap-3"
+        }
       >
         <h2 className="font-bold text-lg">Manage Membership</h2>
         <span
@@ -38,14 +46,37 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
           </div>
         </div>
         <h2 className="font-bold">Extend Membership</h2>
-        <div className="py-4 rounded-md bg-blue-100 gap-3 flex flex-row items-center justify-center">
-          <button className="cursor-pointer px-2 py-1 rounded-md bg-white border border-blue-600  text-blue-400">
+        <div
+          className={`py-4 rounded-md bg-blue-100 gap-3 flex flex-row items-center justify-center `}
+        >
+          <button
+            onClick={() => setSelectedExtension(1)}
+            className={`cursor-pointer px-2 py-1 rounded-md border border-blue-600 transition-colors ${
+              selectedExtension === 1
+                ? "bg-blue-600 text-white font-semibold shadow-inner"
+                : "bg-white text-blue-400 hover:bg-blue-50"
+            }`}
+          >
             +1 Month
           </button>
-          <button className=" cursor-pointer px-2 py-1 rounded-md bg-white border border-blue-600  text-blue-400">
+          <button
+            onClick={() => setSelectedExtension(2)}
+            className={`cursor-pointer px-2 py-1 rounded-md border border-blue-600 transition-colors ${
+              selectedExtension === 2
+                ? "bg-blue-600 text-white font-semibold shadow-inner"
+                : "bg-white text-blue-400 hover:bg-blue-50"
+            }`}
+          >
             +3 Months
           </button>
-          <button className=" cursor-pointer px-2 py-1 rounded-md bg-white border border-blue-600  text-blue-400">
+          <button
+            onClick={() => setSelectedExtension(3)}
+            className={`cursor-pointer px-2 py-1 rounded-md border border-blue-600 transition-colors ${
+              selectedExtension === 3
+                ? "bg-blue-600 text-white font-semibold shadow-inner"
+                : "bg-white text-blue-400 hover:bg-blue-50"
+            }`}
+          >
             +1 Year
           </button>
         </div>

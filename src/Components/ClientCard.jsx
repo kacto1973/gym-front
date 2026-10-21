@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import MembershipModal from "../Components/MembershipModal.jsx";
 
-const ClientCard = ({ client, setModalActive }) => {
+const ClientCard = ({ client, setModalActive, setSelectedClient }) => {
   const getInitials = (name) => {
     return name.substring(0, 2).toUpperCase();
   };
@@ -11,6 +11,12 @@ const ClientCard = ({ client, setModalActive }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
+  };
+
+  const isActive = (endOfTerm) => {
+    const now = new Date();
+    const expirationDate = new Date(endOfTerm);
+    return expirationDate >= now;
   };
 
   return (
@@ -35,7 +41,7 @@ const ClientCard = ({ client, setModalActive }) => {
         </span>
 
         {/* Badge active or not */}
-        {client.active ? (
+        {isActive(client.endOfTerm) ? (
           <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
             Active
           </span>
@@ -48,7 +54,10 @@ const ClientCard = ({ client, setModalActive }) => {
 
       {/* action button */}
       <button
-        onClick={() => setModalActive((value) => !value)}
+        onClick={() => {
+          setModalActive((value) => !value);
+          setSelectedClient(client);
+        }}
         className="w-full mt-auto border border-indigo-600 text-indigo-600 hover:bg-indigo-50 py-1.5 rounded-md text-sm font-medium transition-colors"
       >
         Manage Membership

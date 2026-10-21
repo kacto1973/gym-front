@@ -1,13 +1,48 @@
 import React from "react";
 import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import api from "../api.js";
 import { mockClients } from "../mockData.js";
 import ClientCard from "../Components/ClientCard.jsx";
 import MembershipModal from "../Components/MembershipModal.jsx";
 
 const AdminPage = () => {
-  const [clients, setClients] = useState(mockClients);
+  const queryClient = useQueryClient();
+  const [search, setSearch] = useState("");
+
+  const {
+    data: clients = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["clients"],
+    queryFn: async () => {
+      const response = await api.get("/clients");
+      return response.data;
+    },
+  });
+
+  const addClientMutation = useMutation({
+    mutationFn: async (newClientData) => {
+      const response = await api.post("clients", newClientData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+    },
+  });
+
   const [selectedClient, setSelectedClient] = useState(null);
   const [modalActive, setModalActive] = useState(false);
+
+  if (isLoading) return <p>Cargando base de datos del gimnasio...</p>;
+  if (isError) return <p>Error de conexión con el servidor.</p>;
+
+  const filteredClients = clients.filter(
+    (client) =>
+      client.name.toLowerCase().includes(search.toLowerCase()) ||
+      client._id.includes(search),
+  );
 
   return (
     <main className="relative">
@@ -45,6 +80,7 @@ const AdminPage = () => {
                 className="w-full bg-white border border-gray-400 pl-4 pr-10 py-1 rounded-md"
                 type="search"
                 placeholder="Search Client (Name or ID)"
+                onChange={(e) => setSearch(e.target.value)}
               />
               <img
                 src="/glass.svg"
@@ -59,8 +95,10 @@ const AdminPage = () => {
         </div>
         {/*Client container*/}
         <div className="m-5 gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-          {clients.map((client) => (
+          {filteredClients.map((client) => (
             <ClientCard
+              key={client._id}
+              setSelectedClient={setSelectedClient}
               setModalActive={setModalActive}
               client={client}
             ></ClientCard>
