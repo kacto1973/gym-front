@@ -1,11 +1,58 @@
 import React from "react";
 import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { updateClient, deleteClient } from "../services/clientService.js";
 
 const MembershipModal = ({ client, modalActive, setModalActive }) => {
+  const queryClient = useQueryClient();
   const [selectedExtension, setSelectedExtension] = useState(null);
   if (modalActive) {
     console.log("Current Selected Client:", client);
   }
+
+  const updateClientMutation = useMutation({
+    mutationFn: async (clientId) => {
+      const response = await updateClient(clientId);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      toast.success("Operación exitosa");
+
+      //clean client info
+      setSelectedExtension(0);
+
+      //close modal
+      setModalActive(false);
+    },
+    onError: (error) => {
+      const errorMsg =
+        error.response?.data?.message || "Error inesperado de conexión";
+      toast.error(errorMsg);
+    },
+  });
+
+  const deleteClientMutation = useMutation({
+    mutationFn: async (clientId) => {
+      const response = await deleteClient(clientId);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      toast.success("Operación exitosa");
+
+      //clean client info
+      setSelectedExtension(0);
+
+      //close modal
+      setModalActive(false);
+    },
+    onError: (error) => {
+      const errorMsg =
+        error.response?.data?.message || "Error inesperado de conexión";
+      toast.error(errorMsg);
+    },
+  });
 
   if (!modalActive) return null;
 
@@ -88,7 +135,13 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
             Cancel
           </button>
           <button
-            onClick={() => setModalActive(false)}
+            onClick={async () => {
+              if (selectedExtension) {
+                updateClientMutation.mutate(client._id);
+              } else {
+                toast.error("Please select a membership extension");
+              }
+            }}
             className="cursor-pointer px-4 py-1 rounded-md  bg-blue-600 text-white "
           >
             Save Changes

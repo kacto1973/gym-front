@@ -1,42 +1,47 @@
 import React from "react";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import api from "../api.js";
 import { mockClients } from "../mockData.js";
 import ClientCard from "../Components/ClientCard.jsx";
 import MembershipModal from "../Components/MembershipModal.jsx";
+import AddClientModal from "../Components/AddClientModal.jsx";
+import { toast } from "react-toastify";
+import { getClients } from "../services/clientService.js";
 
 const AdminPage = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
 
   const {
+    //clients is here just an array of clients (returned by the backend)
     data: clients = [],
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["clients"],
-    queryFn: async () => {
-      const response = await api.get("/clients");
-      return response.data;
-    },
-  });
-
-  const addClientMutation = useMutation({
-    mutationFn: async (newClientData) => {
-      const response = await api.post("clients", newClientData);
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-    },
+    queryFn: getClients,
   });
 
   const [selectedClient, setSelectedClient] = useState(null);
   const [modalActive, setModalActive] = useState(false);
+  const [addClientModalActive, setAddClientModalActive] = useState(false);
 
-  if (isLoading) return <p>Cargando base de datos del gimnasio...</p>;
-  if (isError) return <p>Error de conexión con el servidor.</p>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-xl font-bold">Loading gym desktop database...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center h-screen text-red-500">
+        <p className="text-xl font-bold">Server connection error...</p>
+        <p>{error.response?.data?.message}</p>
+      </div>
+    );
+  }
 
   const filteredClients = clients.filter(
     (client) =>
@@ -50,6 +55,10 @@ const AdminPage = () => {
         client={selectedClient}
         setModalActive={setModalActive}
         modalActive={modalActive}
+      />
+      <AddClientModal
+        setModalActive={setAddClientModalActive}
+        modalActive={addClientModalActive}
       />
       {/*Header*/}
       <header className="flex justify-between mx-10 items-center">
@@ -89,7 +98,10 @@ const AdminPage = () => {
               />
             </div>
           </div>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button
+            onClick={() => setAddClientModalActive(true)}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
             Add Client
           </button>
         </div>
