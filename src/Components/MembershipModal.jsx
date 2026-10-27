@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateClient, deleteClient } from "../services/clientService.js";
+import { toast } from "react-toastify";
 
 const MembershipModal = ({ client, modalActive, setModalActive }) => {
   const queryClient = useQueryClient();
@@ -11,8 +12,8 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
   }
 
   const updateClientMutation = useMutation({
-    mutationFn: async (clientId) => {
-      const response = await updateClient(clientId);
+    mutationFn: async (newClient) => {
+      const response = await updateClient(newClient);
       return response.data;
     },
     onSuccess: () => {
@@ -53,6 +54,20 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
       toast.error(errorMsg);
     },
   });
+
+  const validate = () => {
+    if (
+      !(
+        selectedExtension === 1 ||
+        selectedExtension === 2 ||
+        selectedExtension === 3
+      )
+    ) {
+      toast.warning("Please select an initial membership duration");
+      return false;
+    }
+    return true;
+  };
 
   if (!modalActive) return null;
 
@@ -128,6 +143,21 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
           </button>
         </div>
         <div className="flex flex-row justify-end">
+          <img
+            onClick={async () => {
+              const confirmDelete = window.confirm(
+                "Are you sure you want to delete this client?",
+              );
+
+              if (confirmDelete) {
+                deleteClientMutation.mutate(client._id);
+              }
+            }}
+            className="absolute left-4 bottom-4 cursor-pointer"
+            src="/trashbin.svg"
+            alt="delete Btn"
+            width={25}
+          />
           <button
             className="cursor-pointer  px-4 py-1 rounded-md bg-gray-300 text-gray-500 mr-2"
             onClick={() => setModalActive(false)}
@@ -136,11 +166,26 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
           </button>
           <button
             onClick={async () => {
-              if (selectedExtension) {
-                updateClientMutation.mutate(client._id);
-              } else {
-                toast.error("Please select a membership extension");
+              if (!validate) {
+                return;
               }
+
+              const newEndOfTerm = new Date(client.endOfTerm);
+
+              if (selectedExtension === 1) {
+                newEndOfTerm.setMonth(newEndOfTerm.getMonth() + 1);
+              } else if (selectedExtension === 2) {
+                newEndOfTerm.setMonth(newEndOfTerm.getMonth() + 3);
+              } else if (selectedExtension === 3) {
+                newEndOfTerm.setFullYear(newEndOfTerm.getFullYear() + 1);
+              }
+
+              const newClient = {
+                ...client,
+                endOfTerm: newEndOfTerm,
+              };
+
+              updateClientMutation.mutate(newClient);
             }}
             className="cursor-pointer px-4 py-1 rounded-md  bg-blue-600 text-white "
           >

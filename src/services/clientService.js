@@ -12,8 +12,8 @@ export const addClient = async (newClient) => {
 };
 
 //mainly to extend the membership of the client
-export const updateClient = async (clientId) => {
-  const response = await api.put(`/clients/${clientId}`);
+export const updateClient = async (newClient) => {
+  const response = await api.put(`/clients/${newClient._id}`, newClient);
   return response.data;
 };
 

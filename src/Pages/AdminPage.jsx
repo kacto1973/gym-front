@@ -43,10 +43,13 @@ const AdminPage = () => {
     );
   }
 
+  const searchLowerCase = search.toLowerCase();
+
   const filteredClients = clients.filter(
     (client) =>
-      client.name.toLowerCase().includes(search.toLowerCase()) ||
-      client._id.includes(search),
+      (client.name.toLowerCase().includes(searchLowerCase) ||
+        client._id.includes(search)) &&
+      client.active,
   );
 
   return (
