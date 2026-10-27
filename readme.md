@@ -1,9 +1,17 @@
 # Gym Membership Manager
 
-A clean, full-stack web application designed to help gym owners efficiently manage their clients' memberships, track expiration dates, and maintain essential emergency contact information.
+A simple, full-stack web application designed to help gym owners efficiently manage their clients' memberships, track expiration dates, and maintain essential emergency contact information.
 
 ## 🎯 Goal
 Create an intuitive, easy-to-use platform that allows a gym owner to properly manage and organize client gym memberships without unnecessary complexity.
+
+## Live Demo
+https://kacto-gym-front.netlify.app/
+
+## Deployment & Platforms
+* Netlify for frontend hosting
+* Render for backend API deploy
+* Git & GitHub
 
 ## 🚀 Tech Stack
 **Frontend:**
@@ -39,3 +47,4 @@ The application runs on a single main MongoDB collection for simplicity and perf
   endOfTerm: Date,
   active: Boolean
 }
+
