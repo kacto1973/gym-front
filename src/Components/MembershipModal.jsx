@@ -33,6 +33,17 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
     },
   });
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
+  const isActive = (endOfTerm) => {
+    const now = new Date();
+    const expirationDate = new Date(endOfTerm);
+    return expirationDate >= now;
+  };
+
   const deleteClientMutation = useMutation({
     mutationFn: async (clientId) => {
       const response = await deleteClient(clientId);
@@ -78,7 +89,26 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
           "relative max-w-[50%] z-50 p-4 bg-white rounded-md flex flex-col gap-3"
         }
       >
-        <h2 className="font-bold text-lg">Manage Membership</h2>
+        <h2 className="font-bold text-lg">{client?.name}</h2>
+
+        <div className="flex flex-row gap-4 items-center">
+          <span className="text-gray-500">
+            Expires:{" "}
+            <span className="font-semibold text-gray-700">
+              {formatDate(client.endOfTerm)}
+            </span>
+          </span>
+          {/* Badge active or not */}
+          {isActive(client.endOfTerm) ? (
+            <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+              Active
+            </span>
+          ) : (
+            <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
+              Expired
+            </span>
+          )}
+        </div>
         <span
           className="cursor-pointer font-bold absolute right-4 top-4"
           onClick={() => setModalActive(false)}
@@ -96,16 +126,10 @@ const MembershipModal = ({ client, modalActive, setModalActive }) => {
             <p className="text-gray-400">Emergency Contact</p>
             <p>{client?.emergencyContact || "N/A"}</p>
           </div>
-
-          <div className="p-4  border-r border-gray-200">
-            <p className="text-gray-400">Current Status</p>
-            <p>{client?.active ? "Active" : "Expired"}</p>
-          </div>
-
-          <div className="p-4 b border-gray-200">
-            <p className="text-gray-400">Notes / Info</p>
-            <p>{client?.notes || "N/A"}</p>
-          </div>
+        </div>
+        <div className="p-4 b border-gray-200">
+          <p className="text-gray-400">Notes / Info</p>
+          <p>{client?.notes || "N/A"}</p>
         </div>
         <h2 className="font-bold">Extend Membership</h2>
         <div

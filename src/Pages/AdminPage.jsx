@@ -63,26 +63,27 @@ const AdminPage = () => {
         setModalActive={setAddClientModalActive}
         modalActive={addClientModalActive}
       />
-      {/*Header*/}
-      <header className="flex justify-between mx-10 items-center">
-        <div className="gap-3 flex flex-row items-center">
-          <img src="/dumbbell.svg" alt="logo" width={60} />
-          <h1 className="text-xl font-bold">GYM DESKTOP MANAGER</h1>
-        </div>
-        <div className="flex flex-row items-center gap-3">
-          <div className="cursor-pointer font-bold rounded-full w-10 h-10 bg-green-400 flex items-center justify-center">
-            <span className="text-green-800">LA</span>
+      <div className="top-0 left-0 sticky z-30 pb-1 rounded-b-md bg-[#D5DCE4]">
+        {/*Header*/}
+        <header className="flex justify-between mx-10 items-center shadow-md">
+          <div className="gap-3 flex flex-row items-center">
+            <img src="/dumbbell.svg" alt="logo" width={60} />
+            <h1 className="text-xl font-bold">GYM DESKTOP MANAGER</h1>
           </div>
-          <img
-            className="cursor-pointer"
-            src="/gear.svg"
-            width={30}
-            alt="settings"
-          />
-        </div>
-      </header>
-      <hr />
-      <div>
+          <div className="flex flex-row items-center gap-3">
+            <div className="cursor-pointer font-bold rounded-full w-10 h-10 bg-green-400 flex items-center justify-center">
+              <span className="text-green-800">LA</span>
+            </div>
+            <img
+              className="cursor-pointer"
+              src="/gear.svg"
+              width={30}
+              alt="settings"
+            />
+          </div>
+        </header>
+        <hr />
+
         {/*Search bar*/}
         <div className=" m-5 bg-white shadow-md rounded-lg p-4 flex flex-row justify-between ">
           <div className="flex flex-row gap-3 w-1/3 items-center">
@@ -108,8 +109,11 @@ const AdminPage = () => {
             Add Client
           </button>
         </div>
+      </div>
+
+      <div className="relative">
         {/*Client container*/}
-        <div className="m-5 gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+        <div className=" pb-6 m-5 gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 overflow-y-auto">
           {filteredClients.map((client) => (
             <ClientCard
               key={client._id}

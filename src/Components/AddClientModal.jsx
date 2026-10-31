@@ -5,6 +5,11 @@ import { toast } from "react-toastify";
 import { validate } from "zod";
 import { addClient } from "../services/clientService.js";
 import api from "../services/api.js";
+import {
+  isPossiblePhoneNumber,
+  isValidPhoneNumber,
+  parsePhoneNumberFromString,
+} from "libphonenumber-js";
 
 const AddClientModal = ({ setModalActive, modalActive }) => {
   const queryClient = useQueryClient();
@@ -69,6 +74,17 @@ const AddClientModal = ({ setModalActive, modalActive }) => {
       toast.warning("Please select an initial membership duration");
       return false;
     }
+
+    if (!isValidPhoneNumber(phoneNumber)) {
+      toast.error("Invalid phone number format.");
+      return false;
+    }
+
+    if (!isValidPhoneNumber(emergencyContact)) {
+      toast.error("Invalid emergency phone number format.");
+      return false;
+    }
+
     return true;
   };
 
@@ -105,11 +121,17 @@ const AddClientModal = ({ setModalActive, modalActive }) => {
               <span>Phone Number</span>
               <input
                 onChange={(e) => {
-                  setNewClient({ ...newClient, phoneNumber: e.target.value });
+                  setNewClient({
+                    ...newClient,
+                    phoneNumber:
+                      parsePhoneNumberFromString(
+                        e.target.value,
+                      )?.formatInternational() || e.target.value,
+                  });
                 }}
                 className="border border-gray-300 rounded-md w-full p-2"
                 type="text"
-                placeholder="+52 662 423 7920"
+                placeholder="+49 151 12345678"
               />
             </div>
             <div className="flex flex-col gap-2 items-start">
@@ -118,12 +140,15 @@ const AddClientModal = ({ setModalActive, modalActive }) => {
                 onChange={(e) => {
                   setNewClient({
                     ...newClient,
-                    emergencyContact: e.target.value,
+                    emergencyContact:
+                      parsePhoneNumberFromString(
+                        e.target.value,
+                      )?.formatInternational() || e.target.value,
                   });
                 }}
                 className="border border-gray-300 rounded-md w-full p-2"
                 type="text"
-                placeholder="Jane > +52 662 423 7920"
+                placeholder="+49 151 12345678"
               />
             </div>
           </div>
